@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>新闻文本分类</title>
+    </head>
+    <body>
+        <!-- 批量输入 -->
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <h2>批量输入</h2>
+                 <input type="file" name="csv-xls">
+            </div>
+            </br>
+            <div>
+                <button type="submit" class="btn" name="batch">提交</button>
+                <button type="button" class="btn"><a href="/download/">预测结果下载</a></button>
+            </div>
+
+        </form>
+        </br>
+        <!-- 单例输入 -->
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <h2>单例输入</h2> 
+                <p>新闻标题: <input type="text" name="title" value=""></p>
+                <p>新闻内容: <input type="text" name="content" value=""></p>    
+            </div>
+            <div>
+                <button type="submit" class="btn" name="single">提交</button>
+            </div>
+            <!-- 打印预测结果 -->
+            <table border="1">
+                <!-- <tr>
+                    <td>新闻标题</td>
+                    <td>新闻内容</td>
+                    <td>预测标签</td>
+                    <td>耗时（秒）</td>
+                </tr> -->
+                {% for item in item_list %}
+                    <tr>
+                        <!-- 新闻标题、新闻内容、预测标签、耗时 -->
+                        <td>{{item.0}}</td>
+                        <td>{{item.1}}</td>
+                        <td>{{item.2}}</td>
+                        <td>{{item.3}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </form>
+        
+        {% if messages %}
+            <script>
+                {% for msg in messages %}
+                alert("{{ msg.message }}")
+                {% endfor %}
+            </script>
+        {% endif %}
+    </body>
+</html>
