@@ -7,6 +7,6 @@
 - __data/saved_dict__: 训练`.ckpt`文件
 - __bert_pretrain__: bert_base预训练模型
 - __usage__: `./runDjango.bat`
-- __aDriver link__: [aDriver](https://www.aliyundrive.com/s/49BgLpTdcTm)
+- __aDriver link__: [aDriver](https://www.aliyundrive.com/s/EUnLrt3PV7S)
 
 ### Keep Going!🐱‍🏍
