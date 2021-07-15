@@ -68,7 +68,8 @@ def batch_upload(request):
     if file_name.endswith("xlsx"):
         file_data = xlrd.open_workbook(filename=None, file_contents=file.read())
         sheet_names = file_data.sheet_names()
-        sheet = file_data.sheet_by_name("类别")
+        # sheet = file_data.sheet_by_name("类别")
+        sheet = file_data.sheet_by_index(0)
         # 完整预测条目：[编号, channel, title, content]
         complete_predict_line = list()
 
