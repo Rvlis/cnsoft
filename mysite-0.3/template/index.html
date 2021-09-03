@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>新闻文本分类</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/bootstrap.min.js"></script>
+    <style type="text/css">
+
+        body {
+            width: 100%;
+            background: #fdfcf8;
+            font-family: "SF Pro SC", "SF Pro Text", "SF Pro Icons", "PingFang SC", Verdana, Arial, '微软雅黑', '宋体';
+        }
+
+        .header {
+            background-color: #0d6efd;
+            height: 50px;
+            color: white;
+            width: 100%;!important;
+            margin-bottom: 5px;
+        }
+
+        .navbar-brand {
+            font-size: 25px;
+            color: white;
+
+        }
+        .total_container{
+            background: #FFF;
+            width: 100%;
+            font-size: 0;
+
+
+        }
+
+        .news_wrap{
+            display: inline-block;
+            font-family: 'Microsoft YaHei',PingFangSC-Regular,HelveticaNeue-Light,'Helvetica Neue Light',sans-serif;
+            font-size: 0px;
+            width: 55%;
+            margin-right: 12%;
+            vertical-align: top;
+            background: #f5f5f5;
+
+        }
+
+        .news_title{
+            text-align: center;
+            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: 0;
+
+        }
+
+        .news_content{
+            text-align: left;
+            -webkit-font-smoothing: antialiased;
+            font-family: 'Microsoft YaHei',PingFangSC-Regular,HelveticaNeue-Light,'Helvetica Neue Light',sans-serif;
+            font-size: 16px;
+            line-height: 27px;
+            margin: 0;
+            padding: 0;
+            min-height: 300px;
+            text-indent:32px
+        }
+
+        .div_input{
+            display : inline-block;
+            width:20%;
+            {#background: green;#}
+            margin-left: 12%;
+            margin-right: 1%;
+            vertical-align: top;
+            font-size: 18px;
+        }
+
+        .forecast_results{
+            display: inline-block;
+            width:100%;
+            {#background: green;#}
+            vertical-align: top;
+        }
+        .progress{
+            margin: 10px;
+        }
+        .dividing_line{
+            width: 100%;
+            height: 5px;
+            background: #fff;
+            margin-top: 1px;
+        }
+        .batch_input_h2,.single_input_h2{
+            {#background: wheat;#}
+            margin-bottom: 20px;
+        }
+        .news_page{
+            width: 92%;
+            margin: 2% 4%;
+            vertical-align: top;
+        }
+        .news_predict_result{
+            font-size: 0px;
+            width: 92%;
+            {#background: white;#}
+            margin-left: 4%;
+            margin-top: 1%;
+        }
+        .news_predict_result_item1{
+            width: 30%;
+            display: inline-block;
+            text-align: left;
+            {#border-right:2px solid #00F;#}
+            font-size: 15px;
+        }
+        .news_predict_result_item2{
+            font-size: 18px;
+            width: 30%;
+            display: inline-block;
+            text-align: left;
+            {#border-right:2px solid #00F;#}
+            padding-left: 5px;
+            color: #0d6efd;
+        }
+        .news_predict_result_item3{
+            font-size: 18px;
+            width: 30%;
+            display: inline-block;
+            text-align: left;
+            {#border-right:2px solid #00F;#}
+            padding-left: 5px;
+            color: #0d6efd;
+        }
+        .pager{
+            font-size: 12px;
+        }
+        .log{
+            width: 10%;
+            margin-left: 1%;
+            display : inline-block;
+
+        }
+        .btn-success {
+            color: #fff;
+            background-color: #0d6efd;
+            {#border-color: #4cae4c;#}
+        }
+        .btn-success:hover{
+            color: black;
+            background-color: #0d6efd;
+        }
+        .btn-success:active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        .btn-success:focus{
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        hr{
+            margin-top: 5px;
+            margin-bottom: 5px;
+            border: 0;
+            border-top: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="navbar-brand ">新闻文本分类</div>
+    </div>
+    <div class="total_container">
+        <div class="div_input">
+                <!-- 批量输入 -->
+                <form action="newsInput" onsubmit="return btn_sumbit('batch-form');" method="post" name="batch-form" enctype="multipart/form-data" target="nm_iframe">
+                    {% csrf_token %}
+                    <div>
+                        <h2 class="batch_input_h2">1. 批量输入</h2>
+                        <input type="file" style="width: 100%;color: black;font-size: 14px;" id="batch-file"  name="csv-xls" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                    </div>
+                    </br>
+                    <div>
+                        <button type="submit" class="btn-success  btn-block btn"  name="batch">提交</button>
+                        <!--进度条-->
+{#                        <textarea class="form-control" id="chat-log" disabled rows="1"></textarea>#}
+                        <div class="forecast_results">
+                            <!--完成进度条-->
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar progress-bar-success" role="progressbar"
+                                     aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                                     style="width: 0.00%; text-align: left;color: black" id="percentage_div">
+                                    <span id="percentage_span" style="display:inline-block;padding-left: 10px;width:100px">00.00%完成</span>
+                                </div>
+                            </div>
+                            <!--F1值-->
+{#                            <div class="progress progress-striped active">#}
+{#                                <div class="progress-bar progress-bar-success" role="progressbar"#}
+{#                                     aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"#}
+{#                                     style="width: 0.00%; text-align: left;color: black" id="F1_div">#}
+{#                                    <span id="F1_span" style="display:inline-block;padding-left: 10px;width:100px">F1值：0.00</span>#}
+{#                                </div>#}
+{#                            </div>#}
+                        </div>
+                        <button type="button" class="btn" ><a href="/download/" >预测结果下载</a></button>
+                    </div>
+                </form>
+                <iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+                <!-- 单例输入 -->
+                <div class="dividing_line"></div>
+                <form action="newsInput" onsubmit="return btn_sumbit('single-form');" target="nm_iframe" name="single-form" method="post"  enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div>
+                        <h2 class="single_input_h2">2. 单例输入</h2>
+                        <div class="input-group">
+                            <span class="input-group-addon"  value="">新闻标题</span>
+                            <input type="text" class="form-control" id="single_input_title" name="title" placeholder="">
+                        </div><br>
+                        <div class="input-group">
+                            <span class="input-group-addon" value="">新闻内容</span>
+                            <input type="text" class="form-control" id="single_input_content" name="content" placeholder="">
+                        </div><br>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-success btn-block" name="single">提交</button>
+                        <!--button type="submit" class="btn" name="single">提交</button>-->
+                        <!--input class="btn btn-success btn-block" id="single-submit" onclick="loadPreviouePage()"type="button" value="提交"/-->
+                    </div>
+                    <div>
+                    </div>
+                </form>
+        </div>
+        <div class="news_wrap">
+            <div class="news_predict_result">
+{#                <div class="news_predict_result_item1">#}
+{#                     <span>实际分类：</span><span id="true_class"></span>#}
+{#                </div>#}
+                <div class="news_predict_result_item2">
+                    <span>预测分类：</span><sapn id="predict_class"></sapn>
+                </div>
+                <div class="news_predict_result_item3">
+                    <span>预测时长：</span><span id="predict_time"></span>
+                </div>
+            </div>
+            <div class="news_page">
+                <h4 class="news_title" id="news_title">
+                    新闻标题
+                </h4>
+                <hr  />
+                <div class="news_content" >
+                    <p data-type="2">
+                    <span class="content-wrap" id="news_content">
+                       新闻内容 </span>
+                    </p>
+                </div>
+                <ul class="pager">
+                    <li class="previous"><a href="javascript:void(0);" onclick="loadPreviouePage()">&larr; 上一条</a></li>
+                    <li class="center"><a id="currentPageNum">当前为第0条</a></li>
+                    <li class="next"><a href="javascript:void(0);" onclick="loadNextPage()">下一条 &rarr;</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    <script>
+        <!--记录新闻页面ID-->
+        var currentPageNum = 0;
+        <!--记输入的新闻条数，由后端传入-->
+        total_num = 0
+        <!--记录当前后端运行的任务是否结束：TRUE：结束，flase未结束，未结束的情况下不如许前端有新的任务提交。-->
+        var is_stop = true;
+        <!--输入的形式-->
+        input_type = '';
+       <!--存储后端传入的页面信息-->
+        var newsObj = new Array();
+       <!--加载上一条新闻信息-->
+       function loadPreviouePage() {
+           <!--更新页面ID值-->
+           if(currentPageNum == 0 || currentPageNum == 1){
+               alert("已经是第一页了")
+           }else{
+               currentPageNum -= 1;
+<!--               loadPage();-->
+               loadPagefromDataBase(currentPageNum);
+           }
+       }
+       function loadPagefromDataBase(pageNum) {
+<!--            var packJson = {"pageNum":pageNum};-->
+<!--            chatSocket.send(JSON.stringify(packJson));-->
+
+            $.ajax({
+                url: 'http://127.0.0.1:8000/skipPage',
+                type: 'POST',
+                data: {pageNum: pageNum},
+                dataType:'json',
+                success: function (e) {
+                   //通过e获取后端返回的数据并对页面上的显示的东西进行修改
+                   console.log(e);
+                    newItem = e.itemData;
+                   <!--{"title": fields[0],"content": fields[1]"classfy": fields[2],"time": fields[3]}-->
+                   <!-- 真实标签if (newItem['true_class'] != 'x') {true_class.textContent = newItem['true_class'];}else{true_class.textContent = '未给出！';}-->
+                   predict_class.textContent = newItem[1];
+                   predict_time.textContent = newItem[4];
+                   news_title.textContent = newItem[2];
+                   news_content.textContent = newItem[3];
+                   currentPageNum_text.textContent = '当前为第' + currentPageNum + '条（共' + total_num + '条)';
+                },
+            })
+       }
+
+        <!--根据ID获取元素，并赋值文本内容true_class predict_class predict_time news_title news_content-->
+       var true_class = document.getElementById('true_class');
+       var predict_class = document.getElementById('predict_class');
+       var predict_time = document.getElementById('predict_time');
+       var news_title = document.getElementById('news_title');
+       var news_content = document.getElementById('news_content');
+       var currentPageNum_text = document.getElementById('currentPageNum');
+        <!-- 加载新闻信息-->
+       function loadPage(){
+           newItem = newsObj[currentPageNum - 1];
+           <!--{"title": fields[0],"content": fields[1]"classfy": fields[2],"time": fields[3]}-->
+           <!-- 真实标签if (newItem['true_class'] != 'x') {true_class.textContent = newItem['true_class'];}else{true_class.textContent = '未给出！';}-->
+           predict_class.textContent = newItem['classfy'];
+           predict_time.textContent = newItem['time'];
+           news_title.textContent = newItem['title'];
+           news_content.textContent = newItem['content'];
+           currentPageNum_text.textContent = '当前为第' + currentPageNum + '条（共' + total_num + '条)';
+        }
+        <!--加载下一条新闻信息-->
+        function loadNextPage(){
+           if(currentPageNum == total_num){
+               alert("已经是最后页了")
+           }else if(currentPageNum == newsObj.length){
+               alert("还未预测出来，请稍后尝试")
+           }else{
+               currentPageNum += 1;
+<!--               loadPage();-->
+               loadPagefromDataBase(currentPageNum);
+           }
+        }
+
+        <!--form提交表单之前需要验证信息-->
+        function btn_sumbit(form_name){
+            if(form_name=="batch-form"){<!--批量输入只支持.csv和.xslx格式文件-->
+                if(document.getElementById('batch-file').files[0]){
+                    var fileName=document.getElementById('batch-file').files[0].name;
+                    var extName = fileName.split('.')[1].toLowerCase();
+                    if(extName != "csv" & extName != "xlsx"){
+                        alert("只支持.csv和.xlsx格式文件！！");
+                        return false;
+                    }
+                }else{
+                    alert("未上传文件，注意只支持.csv和.xlsx格式文件！！");
+                    return false;
+                }
+            }else if(form_name=="single-form"){<!--如果是单例输入需要验证新闻标题和内容是否填写-->
+                {#document.querySelector('#chat-log').value = '';#}
+                var title=document.getElementById('single_input_title').value;
+                var content=document.getElementById('single_input_content').value;
+                if(title == "" | content == ""){
+                    alert("新闻标题和内容都不能为空！");
+                    return false;
+                }
+            }
+
+            <!--验证后台是否正在运行任务-->
+            if(is_stop == true){
+                resetState();
+                is_stop = false;
+                return true;
+            }else{
+                alert("上一个任务还未执行完毕，请稍等。")
+                return false;
+            }
+
+        }
+        <!--点击提交时，重置一些元素和全接触的变量-->
+        function resetState(){
+           <!--重置newObj-->
+            newsObj = new Array();
+           <!--重置进度条-->
+            var percentage_div = document.getElementById('percentage_div');
+            percentage_div.style.width = '0%';
+            var percentage_span = document.getElementById('percentage_span');
+            percentage_span.textContent = '00.00%完成';
+            <!--重置F1值var F1_span = document.getElementById('F1_span'); F1_span.textContent = 'F1值：0.00';-->
+            <!--重置当前页的ID-->
+           currentPageNum = 0;
+            <!--重置当前新闻页的内容-->
+           {# true_class.textContent = '';#}
+           {#predict_class.textContent = '';#}
+           {#predict_time.textContent = '';#}
+           {#news_title.textContent = '新闻标题';#}
+           {#news_content.textContent = '新闻内容';#}
+           {#currentPageNum_text.textContent = '当前为第0条';#}
+        }
+        <!--websocket链接-->
+     var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+<!--&lt;!&ndash;       //打开—个 web socket&ndash;&gt;-->
+<!--        var ws = new WebSocket( "ws://127.8.0.1:8765");-->
+<!--        ws.onopen = function(){-->
+<!--            web Socket已连接上，使用send()方法发送数据-->
+<!--            ws.send("Hello world !");-->
+<!--        };-->
+
+       <!--获取进度条元素和属性-->
+      var percentage_span = document.getElementById('percentage_span');
+      var percentage_div = document.getElementById('percentage_div');
+      <!--websocket链接接收到信息时，执行函数。新闻内容加载-->
+      chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        newsObj.push(data);
+        var num_i = data['num_i'];
+        if (num_i == '1'){
+            currentPageNum = 1;
+            total_num = data['total_num']
+<!--            loadPage();-->
+            loadPagefromDataBase(currentPageNum);
+            <!--total_num = data['total_num'];-->
+        }
+        {#document.querySelector('#chat-log').value += ('预测了第' + num_i + '条.' + '\n');#}
+          if (data['percentage']){<!--批量预测会返回预测进度-->
+              {#document.querySelector('#chat-log').value = ('预测了第' + num_i + '条.' + '\n');#}
+              <!--进度条加载-->
+              percentage_div.style.width = data['percentage'] + '%';
+              percentage_span.textContent = data['percentage'] + '%完成';
+              if (data['percentage'] == 100.0){
+                is_stop = true;<!--预测完成-->
+                  alert("批量预测完成")
+            }
+          }else{<!--单例预测不会返回预测进度-->
+              is_stop = true;
+              alert("单例预测完成")
+          }
+
+      };
+        <!--websocket链接关闭时，执行函数。-->
+      chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+      };
+
+    </script>
+</body>
+</html>
+
+
