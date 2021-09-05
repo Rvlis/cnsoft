@@ -1,5 +1,6 @@
 # Source Code Backup for CnSoft🤣
-## 软件杯代码备份😜
+## 软件杯源码备份🙌
+
 ### `mysite-0.1`
 - __Date__: 6.15
 
@@ -20,7 +21,19 @@
 - __usage2__: `./runPcSoft.bat`
 - __aDriver link__: [aDriver](https://www.aliyundrive.com/s/EUnLrt3PV7S)
 
+### `mysite-1.0`✔
+- __Finals🎈__
+
+### `spiders_tools`
+- __各类爬虫工具__
+
 ### `数据集(20w)`
 - __aDriver link__: [aDriver](https://www.aliyundrive.com/s/EUnLrt3PV7S), 训练集（18w）、开发集（1w）和测试集（~1w）
+
+### `Finals`
+- __第一轮答辩ppt__✔
+- __第二轮答辩ppt__✔
+- __第二轮答辩演示视频（6min）__✔
+- __aDriver link__: [aDriver](https://www.aliyundrive.com/s/EUnLrt3PV7S)
 
 ### Keep Going!🐱‍🏍🐱‍🏍
